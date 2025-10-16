@@ -1,25 +1,41 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import CertificateForm from './components/CertificateForm';
+import CertificateList from './components/CertificateList';
 
-function App() {
+const App = () => {
+  const [certificates, setCertificates] = useState([]);
+  const [editingCertificate, setEditingCertificate] = useState(null);
+
+  useEffect(() => {
+    fetchCertificates();
+  }, []);
+
+  const fetchCertificates = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/certificates');
+      const data = await response.json();
+      setCertificates(data);
+    } catch (error) {
+      console.error('Error fetching certificates:', error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Certificate Management System</h1>
+      <CertificateForm
+        fetchCertificates={fetchCertificates}
+        editingCertificate={editingCertificate}
+        setEditingCertificate={setEditingCertificate}
+      />
+      <CertificateList
+        certificates={certificates}
+        fetchCertificates={fetchCertificates}
+        setEditingCertificate={setEditingCertificate}
+      />
     </div>
   );
-}
+};
 
 export default App;
